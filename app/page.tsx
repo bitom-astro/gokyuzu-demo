@@ -3,18 +3,22 @@
 import { useEffect, useState } from "react";
 
 export default function SkyAR() {
-  const [heading, setHeading] = useState(0);
+  const [heading, setHeading] = useState<number>(0);
 
   useEffect(() => {
-    const handleOrientation = (event) => {
-      // iOS Safari için absolute compass
-      let alpha = event.alpha;
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      let alpha: number | null = null;
 
-      if (typeof event.webkitCompassHeading !== "undefined") {
-        alpha = event.webkitCompassHeading;
+      // iOS Safari compass support
+      const anyEvent = event as any;
+
+      if (typeof anyEvent.webkitCompassHeading !== "undefined") {
+        alpha = anyEvent.webkitCompassHeading;
+      } else {
+        alpha = event.alpha;
       }
 
-      setHeading(alpha || 0);
+      setHeading(alpha ?? 0);
     };
 
     window.addEventListener("deviceorientation", handleOrientation, true);
@@ -24,7 +28,6 @@ export default function SkyAR() {
     };
   }, []);
 
-  // Basit yıldız kataloğu (simülasyon)
   const stars = [
     { x: 20, y: 30 },
     { x: 80, y: 60 },
@@ -49,16 +52,16 @@ export default function SkyAR() {
             key={i}
             className="absolute bg-white rounded-full"
             style={{
-              width: "4px",
-              height: "4px",
-              left: `${s.x}px`,
-              top: `${s.y}px`,
+              width: 4,
+              height: 4,
+              left: s.x,
+              top: s.y,
               opacity: 0.9,
             }}
           />
         ))}
 
-        {/* Cassiopeia mock */}
+        {/* Cassiopeia */}
         <svg className="absolute inset-0 w-full h-full">
           <polyline
             points="60,220 120,180 180,240 240,170 300,220"
@@ -80,10 +83,8 @@ export default function SkyAR() {
       </div>
 
       {/* Compass */}
-      <div className="absolute bottom-6 left-6 right-6 text-center">
-        <div className="text-cyan-300 text-sm">
-          Yön: {Math.round(heading)}°
-        </div>
+      <div className="absolute bottom-6 left-6 right-6 text-center text-cyan-300 text-sm">
+        Yön: {Math.round(heading)}°
       </div>
     </div>
   );
