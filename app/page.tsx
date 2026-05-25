@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { cassiopeia } from "./cassiopeia";
 
 export default function SkyAR() {
   const [heading, setHeading] = useState<number>(0);
